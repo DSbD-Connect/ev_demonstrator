@@ -1,0 +1,6 @@
+ocpp
+websockets
+python-dotenv
+flask[async]
+flask-cors
+psycopg2-binary

@@ -1,0 +1,1 @@
+cp startup.desktop /home/pi/.config/autostart/

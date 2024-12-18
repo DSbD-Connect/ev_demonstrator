@@ -1,0 +1,5 @@
+[Desktop Entry] 
+Name=kiosk
+Exec=/home/pi/Desktop/startup.sh &
+Type=application
+Terminal=true

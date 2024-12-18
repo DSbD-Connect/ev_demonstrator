@@ -1,0 +1,1 @@
+https://dsbd-cms-001.loca.lt/api/start?charging_point_id=CP_1&vehicle_id=

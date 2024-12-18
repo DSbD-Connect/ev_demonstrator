@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+
+    ports:
+      - "9000:9000"
+      - "5556:5556"
+    env_file:
+      - ./.env
+    network_mode: "host"
+
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ./server/initdb:/docker-entrypoint-initdb.d
+      - ./serverdata:/var/lib/postgresql/data
+
+    env_file:
+      - ./.env
+    network_mode: "host"
+    ports:
+      - "5432:5432"

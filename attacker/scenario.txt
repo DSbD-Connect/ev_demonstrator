@@ -1,0 +1,7 @@
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+target_container=$(docker ps | grep hw-manager | cut -d" " -f1)
+docker exec -ti $target_container /bin/bash
+chmod +x sensor_replacement.sh
+./sensor_replacement.sh
