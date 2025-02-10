@@ -43,3 +43,34 @@ services:
       - SYS_ADMIN
       - SYS_PTRACE
     network_mode: "host"
+
+
+  auditbeat:
+    image: docker.elastic.co/beats/auditbeat:8.5.0 # Use the appropriate version
+    container_name: auditbeat
+    privileged: true # Required for Auditbeat to monitor the host
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/host/proc:ro
+      - /etc:/host/etc:ro
+      - /dev:/host/dev
+      - /var/lib/docker:/var/lib/docker:ro
+      - ./auditbeat/auditbeat.yml:/usr/share/auditbeat/auditbeat.yml
+    cap_add:
+      - AUDIT_CONTROL  # Add capabilities
+      - AUDIT_READ
+    pid: host
+
+    env_file:
+      - ./.env
+    environment:
+      - AUDITBEAT_WATCHDIR=${AUDITBEAT_WATCHDIR}
+    command: >
+      -e
+      --strict.perms=false
+
+    network_mode: "host"
+
+    depends_on:
+      - hw-manager

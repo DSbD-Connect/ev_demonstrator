@@ -118,6 +118,16 @@ npx expo start --clear # Scan the app from the cli. For the free version without
 
 - Copy the content inside `attacker` folder to the attacker machine. The attacker machie is placed in the same network only for this demo to make payload preparation as simple as possible. Payloads can be modified to point at some public address where the attacker can listen on and serve payloads.
 
+```bash
+python -m venv a-env
+source a-env/bin/activate
+pip install -r requirements.txt
+source .env
+chmod +x prepare_package.sh
+./prepare-package.sh
+python ev-buster.py "cheri_off" # Continue from here. See below.
+```
+
 
 ## Adversarial Scenarios
 We demonstrate two attack scenarios where the attack chain can be stopped from further progressing by CHERI's protection mechanisms.

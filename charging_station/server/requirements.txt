@@ -1,5 +1,5 @@
-ocpp
-websockets
+ocpp==1.0.0
+websockets==13.1
 python-dotenv
 flask
 flask-cors

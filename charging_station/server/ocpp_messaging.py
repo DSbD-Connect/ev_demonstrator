@@ -219,6 +219,15 @@ class ChargePoint(cp):
             status="Accepted"
         )
 
+    @on(Action.ChangeAvailability)
+    async def on_disable(self, operational_status):
+        self.status = operational_status
+        print(self.charging_profile)
+        logging.info(self.charging_profile)
+        return call_result.ChangeAvailability(
+            status="Accepted"
+        )
+
 
 cp = None
 

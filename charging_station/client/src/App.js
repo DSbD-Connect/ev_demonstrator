@@ -312,6 +312,62 @@ function App() {
            
         </div>
       )}
+
+      {(CPState === "Inoperative") && (
+          
+          <div className="charging-container">
+          <div className="arrowBackground"></div>
+              <div className="text-section">
+                <div className="heading">
+
+                      <TypeAnimation
+                        sequence={[
+                          
+                          1000,
+                          'Temporarily', // First word appears
+                          1000,
+                        ]}
+                        wrapper="div"
+                        cursor={false}
+                        repeat={Infinity}
+                        style={{ display: 'block' }}
+                        className="regular-text"
+                      />
+
+                      <TypeAnimation
+                        sequence={[
+                         
+                          1000, // Wait for first word
+                          'Out of', // Second word appears
+                          1000,
+                        ]}
+                        wrapper="div"
+                        cursor={false}
+                        repeat={Infinity}
+                        style={{ display: 'block' }}
+                        className="green-text"
+                      />
+
+                      <TypeAnimation
+                        sequence={[
+                         
+                          1000, // Wait for first two words
+                          'Service', // Third word appears
+                          1000,
+                        ]}
+                        wrapper="div"
+                        cursor={false}
+                        repeat={Infinity}
+                        style={{ display: 'block' }}
+                        className="regular-text"
+                      />
+
+                </div>
+              </div>
+          </div>
+    
+
+      )}
     </div>
     </div>
   );

@@ -30,6 +30,7 @@ CORS(app)
 cm = ocpp_messaging.Central_Management()
 loop = asyncio.new_event_loop()
 
+received_alerts = set()
 
 @app.route('/api/start')
 def start_transaction():
@@ -153,6 +154,27 @@ def card_provider():
 @app.route('/api/qr')
 def get_qr():
     return True
+
+
+@app.route('/api/alert', methods=['POST'])
+def alert():
+    if os.environ["MONITORING"] == "on":
+        request_json = request.get_json()
+        logging.info(request_json)
+        if (request_json["alert_id"] not in received_alerts):
+            received_alerts.add(request_json["alert_id"])
+            # processing the alert
+            if 'initial_scan' not in request_json['event']['action']:
+                logging.info("Suspicious activity on: %s", str(request_json["charging_point_id"]))
+                future = asyncio.run_coroutine_threadsafe(
+                     cm.charging_points[request_json["charging_point_id"]].disable_station(),
+                     loop
+                )
+                response = future.result()
+                return jsonify(response)
+        else:
+            logging.info("Received duplicate alert: %s", str(request_json["alert_id"]))
+    return jsonify(True)
 
 
 def run_flask():

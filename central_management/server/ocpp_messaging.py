@@ -8,7 +8,7 @@ from ocpp.routing import on
 from ocpp.v201 import ChargePoint as cp
 from ocpp.v201 import call_result
 from ocpp.v201 import call
-from ocpp.v201.enums import RegistrationStatusType, Action
+from ocpp.v201.enums import RegistrationStatusType, Action, OperationalStatusType
 from db_manager import db_manager
 
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +42,7 @@ class ChargePoint(cp):
     async def on_boot_notification(self, charging_station, reason, **kwargs):
         self.status = "Ready"
         asyncio.create_task(self.set_charging_profile())
-        return call_result.BootNotificationPayload(   
+        return call_result.BootNotificationPayload(
             status=RegistrationStatusType.accepted,
             current_time=datetime.utcnow().isoformat(),
             interval=10,
@@ -171,11 +171,23 @@ class ChargePoint(cp):
                 status="Rejected"
             )
 
+    async def disable_station(self):
+
+        if self.status == "Charging":
+            self.send_remote_stop()
+
+        req = call.ChangeAvailability(
+            operational_status=OperationalStatusType.inoperative
+        )
+        response = await self.call(req)
+        return response
+
 
 class Central_Management:
 
     def __init__(self):
         self.charging_points = {}
+        self.disabled_charging_points = {}
 
     async def on_connect(self, websocket, path):
         """ For every new charge point that connects, create a ChargePoint
@@ -205,7 +217,7 @@ class Central_Management:
         cp = ChargePoint(charge_point_id, websocket)
         cp.remote_start_id = 0
         cp.charging_session = None
-        self.charging_points[charge_point_id] = cp        
+        self.charging_points[charge_point_id] = cp
         await cp.start()
         cp.status = "Ready"
         print("Registered charge point with id: ", charge_point_id)

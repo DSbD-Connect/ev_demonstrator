@@ -1,0 +1,7 @@
+# ~/elasticsearch/config/elasticsearch.yml
+discovery.type: single-node
+xpack.security.enabled: false  # Disable security
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
+network.host: 0.0.0.0  # Allows connections from all IPs
+http.port: 9200

@@ -59,6 +59,11 @@ const ChargingScreen = ({ route, navigation }) => {
           console.log("CP State", result.cp_status);
           navigateToSummary();
         }
+        if (result.cp_status === "Inoperative"){
+          console.log("CP State", result.cp_status);
+          navigateToSummary();
+        }
+        
       } catch (error) {
         //console.error(error); // Log any errors
       }
