@@ -130,7 +130,7 @@ python ev-buster.py "cheri_off" # Continue from here. See below.
 
 
 ## Adversarial Scenarios
-We demonstrate two attack scenarios where the attack chain can be stopped from further progressing by CHERI's protection mechanisms.
+We demonstrate three attack scenarios where the attack chain can be stopped from further progressing by CHERI's protection mechanisms.
 
 ### Scenario 1: Buffer Overflow in the Authentication Mechanism on the Login Screen
 - [Demo Video](videos/Ev_Demo_Scenario1_Compressed.mp4)
@@ -352,6 +352,25 @@ The vulnerability that is introduced in the central management server. The devel
 - Architectural Diagram of the Scenario
 ![Scenario 3](images/ev.c18n.png)
 
+
+## Bonus: Additional Mitigations using Monitoring
+This study explored the ways CHERI can be useful for defending against memory-based vulnerabilities. For the adversarial scenarios we created in this paper, a defense-in-depth approach might have prevented the exploit from going further into the memory. For instance, doing input/output checking might have prevented all scenarios from happening. Similarly, following secure coding practices might have prevented all. In addition, further defenses might be set up. This can include web application firewalls (WAFs), and endpoint detection and response (EDR) software. If the charging stations had monitoring capabilities including the file integrity of containers, even in the case of initial access, further escalation might have been prevented. Here, we implemented a monitoring capability just to show that attacks similar to our Adversarial Scenario 2, could be prevented and detected. For this we implemented a host based integrity monitoring feature where the file system of the hw-manager container on the charging station is watched and the central management system is notified when a change occurs. Depending on the type of change, the central management system marks the charging station suspicious and disables the charging station. The existing charging sessions is stopped and the charging station becomes unusable until reviewed by the maintainers. In the diagram below, we highlight the additional components. We add and configure [auditbeat](https://www.elastic.co/beats/auditbeat) on the charging station; [logstash](https://www.elastic.co/logstash), [elastic](https://www.elastic.co/elasticsearch) and relevant server side implemententations and configurations on the central management server.
+
+![Monitoring Architecture](images/ev.monitoring.png)
+
+With these additions, we start the central management as usual. But we must start the charging station using the start.sh script like the following:
+```bash
+# With monitoring on
+./start.sh on
+
+# With monitoring off
+./start off 
+``` 
+
+When a file-integrity change is detected by the auditbeat configuration in the hw-manager container, it uses elasticsearch on the central management server to store the alerts. The logstash service on the central management server then processes the alerts and calls the alert endpoint on the server to be processed. If the alert is suspicious, the central management server disables the charging station via OCPP. Below there is screen recording of how this is displayed on the charging station. 
+
+![Monitoring](images/monitoring.gif)
+
 ## Development 
 
 ###  Mobile Development
@@ -371,4 +390,18 @@ Attacker Stage 2 payloads should be put in shawshank.tar, which can be achieved 
 ```bash
 ./prepare_package.sh
 ```
+
+### ⚠️ Disclaimer  
+
+This repository is intended **solely for demonstration and educational purposes**. It is **not** designed for production use, and any code, configurations, or credentials included are for illustrative purposes only.  
+
+- Any credentials, API keys, or secrets found within this repository are **dummy values** and hold **no real significance or security risk**.  
+- This code **should not be used in real-world applications** without proper modifications and security considerations.  
+- The authors assume **no responsibility** for any misuse, security risks, or issues arising from the use of this code.  
+
+Use at your own discretion.  
+
+
+
+
 
